@@ -49,8 +49,9 @@ app.events:on('sitechange', function()
 
         if(app.sprite ~= nil and lastSprite ~= app.sprite.filename) then
             lastSprite = app.sprite.filename;
+            local data = JSON.decode(app.sprite.data) or {}
             -- TODO: actually parse it lol
-            command('setaudio', app.sprite.data:sub(#("audio=")+1))
+            command('setaudio', data.audio or "")
             command('setfirstframe', (app.preferences.document(app.sprite).timeline.first_frame))
             updatePlayingState()
         end
