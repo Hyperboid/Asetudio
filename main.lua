@@ -11,8 +11,6 @@ function love.run()
             {
                 "env", "ASETUDIO_DIRECTORY="..love.filesystem.getSaveDirectory(),
                 "aseprite",
-                "--script", love.filesystem.getSource() .. "/aseprite_connector.lua",
-                "--script-param", "AsetudioDirectory="..love.filesystem.getSaveDirectory(),
                 unpack(love.arg.parseGameArguments(arg))
             }, "\" \"") .. "\"")
     for full_line in aseprite_stdout:lines() do

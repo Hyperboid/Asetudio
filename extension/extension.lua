@@ -1,10 +1,6 @@
 ---@module 'aseprite'
 
-
----@language JSON
-local pluey = [[{
-  "plue": true
-}]]
+JSON = require("json")
 
 local camexport = require("camexport")
 
@@ -16,7 +12,6 @@ function init(plugin)
     if plugin.preferences.count ~= nil then
       plugin.preferences.count = nil
     end
-  
     --
     if not os.getenv("ASETUDIO_DIRECTORY") then
         for k, v in pairs(app.params) do
@@ -32,9 +27,9 @@ function init(plugin)
             camexport(app.sprite)
         end
     }
+
+    require("aseprite_connector")
 end
 
-function exit(plugin)
-    print("Aseprite is closing my plugin, MyFirstCommand was called "
-        .. plugin.preferences.count .. " times")
+function exit(_plugin)
 end

@@ -36,4 +36,3 @@ COMMANDS = {
         require("commands")
     end;
 }
-print("pluey")
