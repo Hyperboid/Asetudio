@@ -1,0 +1,8 @@
+{
+    "files.exclude": {
+        "**/.love_api": true
+    },
+    "files.associations": {
+        "*.json": "json"
+    }
+}

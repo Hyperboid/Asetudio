@@ -1,0 +1,19 @@
+{
+    "name": "asetudio",
+    "displayName": "Asetudio",
+    "description": "My scripts do something",
+    "version": "0.1",
+    "author": {
+        "name": "Hyperboid",
+        "url": "https://nullanoid.net/"
+    },
+    "contributors": [ ],
+    "publisher": "myname",
+    "license": "CC-BY-4.0",
+    "categories": [ "Scripts" ],
+    "contributes": {
+        "scripts": [
+            { "path": "./extension.lua" }
+        ]
+    }
+}
