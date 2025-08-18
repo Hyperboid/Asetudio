@@ -19,12 +19,18 @@ function init(plugin)
         end
         return print("Debug: Asetudio not active")
     end
+    plugin:newMenuGroup({
+        id = "file_asetudio",
+        title="Asetudio",
+        group = "file_export"
+    })
     plugin:newCommand{
-        id="Export",
-        title="My First Command",
-        group="file_new",
+        id="AsetudioExport",
+        title="Export Animation",
+        group="file_asetudio",
         onclick=function()
             camexport(app.sprite)
+            command("finishexport", "anim", (JSON.decode(app.sprite.data) or {}).audio)
         end
     }
 

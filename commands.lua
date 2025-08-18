@@ -35,4 +35,7 @@ COMMANDS = {
         package.loaded.commands=nil
         require("commands")
     end;
+    finishexport = function(name, audio)
+        -- TODO: Run ffmpeg command
+    end
 }

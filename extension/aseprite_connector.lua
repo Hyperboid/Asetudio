@@ -6,7 +6,7 @@ local playing = {}
 
 ---@param cmd COMMAND
 ---@param ... string
-local function command(cmd, ...)
+function command(cmd, ...)
     local argstr = ""
     for i,v in ipairs({...}) do
         argstr = argstr .. tostring(v) .. "\t"
