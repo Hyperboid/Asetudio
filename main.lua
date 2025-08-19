@@ -12,6 +12,9 @@ function love.load()
     love.filesystem.createDirectory("output")
     love.filesystem.createDirectory("tmp")
     love.filesystem.createDirectory("audio")
+    for _,v in ipairs(love.filesystem.getDirectoryItems("tmp")) do
+        love.filesystem.remove("tmp/"..v)
+    end
     local aseprite_thread = Thread("processthread.lua",{
         commandline = {
             "env", "ASETUDIO_DIRECTORY="..love.filesystem.getSaveDirectory(),
