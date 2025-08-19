@@ -1,5 +1,7 @@
+local MathUtils = require("shared.utils.mathutils")
 ---@module 'aseprite'
 
+local module = {}
 local function printt(text)
     io.write(text.."\n")
     io.flush()
@@ -37,10 +39,46 @@ local function exportFrame(sprite, frame_n, output)
     tempsprite:close()
 end
 
+function module.interpolateCamera(sprite, layer)
+    local last_keyframe = 1
+    local next_keyframe = 1
+    for frameid = 1, #sprite.frames do
+        if layer:cel(frameid) then
+            last_keyframe = frameid
+            next_keyframe = frameid
+            for nextframeid=frameid+1,#sprite.frames do
+                if layer:cel(nextframeid) then
+                    next_keyframe = nextframeid
+                    break
+                end
+            end
+        else
+            local lastcel = layer:cel(last_keyframe)
+            local nextcel = layer:cel(next_keyframe)
+            local image = layer:cel(last_keyframe).image:clone()
+            local t = MathUtils.remap(frameid, last_keyframe, next_keyframe, 0, 1)
+            local coords = Point(
+                MathUtils.lerp(lastcel.position.x, nextcel.position.x, t),
+                MathUtils.lerp(lastcel.position.y, nextcel.position.y, t)
+            )
+            coords.x = math.floor(coords.x)
+            coords.y = math.floor(coords.y)
+            local cel = sprite:newCel(layer, frameid, image, coords)
+        end
+    end
+end
 
-return function(sprite)
+---@param sprite aseprite.Sprite
+function module.preprocessSprite(sprite)
+    if sprite.layers[#sprite.layers].name == "cam" then
+        module.interpolateCamera(sprite, sprite.layers[#sprite.layers])
+    end
+end
+
+---@param sprite aseprite.Sprite
+function module.export(sprite)
     local main_duplicate = Sprite(sprite)
-    -- TODO: Interpolate camera
+    module.preprocessSprite(main_duplicate)
 
     for i = 1, #main_duplicate.frames do
         exportFrame(main_duplicate, i, os.getenv("ASETUDIO_DIRECTORY") .. "/tmp/" .. "anim".."_"..i..".png")
@@ -48,3 +86,16 @@ return function(sprite)
     
     main_duplicate:close()
 end
+
+
+---@param sprite aseprite.Sprite
+function module.makePreview(sprite)
+    local main_duplicate = Sprite(sprite)
+    module.preprocessSprite(main_duplicate)
+end
+
+setmetatable(module, {__call = function(t, ...)
+    return module.export(...)
+end})
+
+return module

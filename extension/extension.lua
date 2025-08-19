@@ -2,7 +2,7 @@
 
 JSON = require("json")
 
-local camexport = require("camexport")
+local export = require("camexport")
 
 
 ---@param plugin aseprite.Plugin
@@ -26,8 +26,16 @@ function init(plugin)
         title="Export Animation",
         group="asetudio",
         onclick=function()
-            camexport(app.sprite)
+            export.export(app.sprite)
             command("finishexport", "anim", (JSON.decode(app.sprite.data) or {}).audio)
+        end
+    }
+    plugin:newCommand{
+        id="AsetudioExport",
+        title="Preview preprocessing",
+        group="asetudio",
+        onclick=function()
+            export.makePreview(app.sprite)
         end
     }
     plugin:newCommand{
