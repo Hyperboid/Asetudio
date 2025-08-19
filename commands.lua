@@ -1,7 +1,7 @@
 ---@enum (key) COMMAND
 COMMANDS = {
     setframe = function(frame, time)
-        if ACTIVE_SOURCE and (not ACTIVE_SOURCE:isPlaying() or math.abs(ACTIVE_SOURCE:tell() - CURRENT_TIME) > 0) then
+        if ACTIVE_SOURCE and (not ACTIVE_SOURCE:isPlaying() or math.abs(ACTIVE_SOURCE:tell() - CURRENT_TIME) > MAX_DESYNC) then
             ACTIVE_SOURCE:seek(time)
         end
         CURRENT_TIME = time

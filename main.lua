@@ -1,4 +1,5 @@
 local StringUtils = require("utils.stringutils")
+require("vars")
 ACTIVE_SOURCE = nil ---@type love.Source?
 CURRENT_TIME = 0 ---@type number
 require("commands")
