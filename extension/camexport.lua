@@ -24,7 +24,7 @@ local function exportFrame(sprite, frame_n, output)
         error("More than one frame left somehow?")
     end
     if tempsprite.layers[#tempsprite.layers].name == "cam" then
-        local cel = tempsprite.layers[#tempsprite.layers]:cel(1)
+        local cel = sprite.layers[#sprite.layers]:cel(frame_n+1) or sprite.layers[#sprite.layers]:cel(frame_n)
         local bounds = Rectangle(cel.bounds)
         bounds.x = bounds.x + 1
         bounds.y = bounds.y + 1
