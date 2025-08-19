@@ -79,10 +79,19 @@ end
 function module.export(sprite)
     local main_duplicate = Sprite(sprite)
     module.preprocessSprite(main_duplicate)
-
+    local ffconcat = assert(io.open(os.getenv("ASETUDIO_DIRECTORY") .. "/tmp/" .. "anim"..".ffconcat", "w"))
+    ffconcat:write("ffconcat version 1.0\n")
+    local filename
     for i = 1, #main_duplicate.frames do
-        exportFrame(main_duplicate, i, os.getenv("ASETUDIO_DIRECTORY") .. "/tmp/" .. "anim".."_"..i..".png")
+        filename = "anim".."_"..i..".png"
+        local full_path = os.getenv("ASETUDIO_DIRECTORY") .. "/tmp/" .. filename
+        exportFrame(main_duplicate, i, full_path)
+        ffconcat:write("file "..filename.."\n")
+        ffconcat:write("duration "..main_duplicate.frames[i].duration.."\n")
     end
+    ffconcat:write("file "..filename.."\n")
+    ffconcat:flush()
+    ffconcat:close()
     
     main_duplicate:close()
 end

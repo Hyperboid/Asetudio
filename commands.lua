@@ -37,21 +37,19 @@ COMMANDS = {
         require("commands")
     end;
     finishexport = function(name, audio)
-        local full_input_prefix = love.filesystem.getSaveDirectory().."/tmp/"..name
+        local full_input_script_path = love.filesystem.getSaveDirectory().."/tmp/"..name..".ffconcat"
         local full_output_path = love.filesystem.getSaveDirectory().."/output/"..name..".webm"
         local full_audio_path = love.filesystem.getSaveDirectory().."/audio/"..audio
-        local fps = 15 -- TODO: Unhardcode
+        local fps = 30 -- TODO: Unhardcode
         local commandline = {
             "ffmpeg", "-y",
-            -- "-loglevel", "warning",
-            "-framerate", fps,
-            "-start_number", "1",
-            "-i", full_input_prefix.."_%d.png",
+            "-i", full_input_script_path,
             "-i", full_audio_path,
             -- "-vcodec", "mpeg4",
             "-vf", "scale=iw*4:ih*4:flags=neighbor",
             "-af", "apad",
             "-shortest",
+            "-r", fps,
             full_output_path,
         }
         print("$ "..table.concat(commandline, " "))
