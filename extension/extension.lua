@@ -31,7 +31,7 @@ function init(plugin)
         end
     }
     plugin:newCommand{
-        id="AsetudioExport",
+        id="AsetudioPreviewPreprocessing",
         title="Preview preprocessing",
         group="asetudio",
         onclick=function()
