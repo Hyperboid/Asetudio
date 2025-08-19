@@ -48,6 +48,9 @@ COMMANDS = {
         thread.end_callback = function ()
             love.window.close()
             print("Finished!")
+            for _,v in ipairs(love.filesystem.getDirectoryItems("tmp")) do
+                love.filesystem.remove("tmp/"..v)
+            end
         end
         thread.message_callback = print
         love.window.setMode(400,100, {
