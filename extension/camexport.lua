@@ -43,7 +43,7 @@ return function(sprite)
     -- TODO: Interpolate camera
 
     for i = 1, #main_duplicate.frames do
-        exportFrame(main_duplicate, i, os.getenv("ASETUDIO_DIRECTORY") .. "/output/" .. "anim_"..i..".png")
+        exportFrame(main_duplicate, i, os.getenv("ASETUDIO_DIRECTORY") .. "/tmp/" .. "anim".."_"..i..".png")
     end
     
     main_duplicate:close()

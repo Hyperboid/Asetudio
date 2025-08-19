@@ -1,3 +1,4 @@
+local Thread = require("utils.thread")
 ---@enum (key) COMMAND
 COMMANDS = {
     setframe = function(frame, time)
@@ -36,6 +37,22 @@ COMMANDS = {
         require("commands")
     end;
     finishexport = function(name, audio)
-        -- TODO: Run ffmpeg command
+        local full_input_prefix = love.filesystem.getSaveDirectory().."/tmp/"..name
+        local full_output_path = love.filesystem.getSaveDirectory().."/output/"..name..".mp4"
+        local full_audio_path = love.filesystem.getSaveDirectory().."/audio/"..audio
+        local commandline = {
+            "ffmpeg", "-y", "-start_number", "1", "-i", full_input_prefix.."_%d.png", "-i", full_audio_path, "-vcodec", "mpeg4", full_output_path
+        }
+        print("$ "..table.concat(commandline, " "))
+        local thread = Thread("processthread.lua", { commandline = commandline})
+        thread.end_callback = function ()
+            love.window.close()
+            print("Finished!")
+        end
+        thread.message_callback = print
+        love.window.setMode(400,100, {
+            resizable = true;
+        })
+        thread:register()
     end
 }

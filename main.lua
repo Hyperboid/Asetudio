@@ -10,6 +10,7 @@ THREADS = {}
 
 function love.load()
     love.filesystem.createDirectory("output")
+    love.filesystem.createDirectory("tmp")
     love.filesystem.createDirectory("audio")
     local aseprite_thread = Thread("processthread.lua",{
         commandline = {
@@ -18,7 +19,7 @@ function love.load()
             unpack(love.arg.parseGameArguments(arg))
         }
     })
-    aseprite_thread.line_callback = function (full_line)
+    aseprite_thread.message_callback = function (full_line)
         ---@cast full_line string
         if full_line:sub(1,#"AsetudioCommand:") == "AsetudioCommand:" then
             local line_unprefixed = full_line:sub(#"AsetudioCommand:"+1, #full_line)
@@ -47,7 +48,7 @@ function love.load()
         love.draw = nil
         love.event.quit()
     end
-    table.insert(THREADS, aseprite_thread)
+    aseprite_thread:register()
 end
 
 function love.update()

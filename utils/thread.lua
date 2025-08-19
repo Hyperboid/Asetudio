@@ -6,7 +6,7 @@ local Thread = {}
 Thread.__index = Thread
 Thread.SETUP_CHANNEL = love.thread.getChannel("threadsetup")
 
-function Thread:init(source, options, line_callback, end_callback)
+function Thread:init(source, options, message_callback, end_callback)
     self.managed_thread = love.thread.newThread(source)
     self.in_channel = love.thread.newChannel()
     self.out_channel = love.thread.newChannel()
@@ -23,9 +23,12 @@ function Thread:init(source, options, line_callback, end_callback)
         assert(res == "success")
     end
     self.removed = false
-    self.line_callback = line_callback or function() end
+    self.message_callback = message_callback or function() end
     self.end_callback = end_callback or function() end
+end
 
+function Thread:register()
+    table.insert(THREADS, self)
 end
 
 ---@param value Variant
@@ -53,7 +56,7 @@ function Thread:update()
         return
     end
     while self.out_channel:getCount() > 0 do
-        self.line_callback(self.out_channel:pop())
+        self.message_callback(self.out_channel:pop())
     end
 end
 
