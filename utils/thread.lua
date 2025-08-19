@@ -1,4 +1,5 @@
 ---@class Thread
+---@field removed boolean
 ---@overload fun(source, options): Thread
 local Thread = {}
 

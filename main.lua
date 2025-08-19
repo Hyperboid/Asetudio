@@ -3,18 +3,21 @@ ACTIVE_SOURCE = nil ---@type love.Source?
 CURRENT_TIME = 0 ---@type number
 require("commands")
 local Thread = require("utils.thread")
+---@type Thread[]
+THREADS = {}
+
 
 function love.load()
     love.filesystem.createDirectory("output")
     love.filesystem.createDirectory("audio")
-    ASEPRITE_THREAD = Thread("processthread.lua",{
+    local aseprite_thread = Thread("processthread.lua",{
         commandline = {
             "env", "ASETUDIO_DIRECTORY="..love.filesystem.getSaveDirectory(),
             "aseprite",
             unpack(love.arg.parseGameArguments(arg))
         }
     })
-    ASEPRITE_THREAD.line_callback = function (full_line)
+    aseprite_thread.line_callback = function (full_line)
         ---@cast full_line string
         if full_line:sub(1,#"AsetudioCommand:") == "AsetudioCommand:" then
             local line_unprefixed = full_line:sub(#"AsetudioCommand:"+1, #full_line)
@@ -39,14 +42,22 @@ function love.load()
             print(full_line)
         end
     end
-    ASEPRITE_THREAD.end_callback = function ()
+    aseprite_thread.end_callback = function ()
         love.draw = nil
         love.event.quit()
     end
+    table.insert(THREADS, aseprite_thread)
 end
 
 function love.update()
-    ASEPRITE_THREAD:update()
+    for i = 1, #THREADS do
+        THREADS[i]:update()
+    end
+    for i = #THREADS, 1, -1 do
+        if THREADS[i].removed then
+            table.remove(THREADS, i)
+        end
+    end
 end
 
 function love.draw()
