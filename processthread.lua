@@ -5,5 +5,3 @@ end)
 for line in PROCESS:lines() do
     out_channel:push(line)
 end
-
-out_channel:push({type = "quit"})

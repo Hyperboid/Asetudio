@@ -4,7 +4,7 @@ CURRENT_TIME = 0 ---@type number
 require("commands")
 local Thread = require("utils.thread")
 
-function love.run()
+function love.load()
     love.filesystem.createDirectory("output")
     love.filesystem.createDirectory("audio")
     ASEPRITE_THREAD = Thread("processthread.lua",{
@@ -14,15 +14,7 @@ function love.run()
             unpack(love.arg.parseGameArguments(arg))
         }
     })
-    while true do
-        if not ASEPRITE_THREAD.managed_thread:isRunning() then
-            return
-        end
-        ---@type {type:"quit"}|string
-        local full_line = ASEPRITE_THREAD:demand()
-        if full_line.type == "quit" then
-            return
-        end
+    ASEPRITE_THREAD.line_callback = function (full_line)
         ---@cast full_line string
         if full_line:sub(1,#"AsetudioCommand:") == "AsetudioCommand:" then
             local line_unprefixed = full_line:sub(#"AsetudioCommand:"+1, #full_line)
@@ -47,4 +39,16 @@ function love.run()
             print(full_line)
         end
     end
+    ASEPRITE_THREAD.end_callback = function ()
+        love.draw = nil
+        love.event.quit()
+    end
+end
+
+function love.update()
+    ASEPRITE_THREAD:update()
+end
+
+function love.draw()
+    love.graphics.print("PROCESSING")
 end
