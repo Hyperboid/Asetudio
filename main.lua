@@ -2,18 +2,28 @@ local StringUtils = require("utils.stringutils")
 ACTIVE_SOURCE = nil ---@type love.Source?
 CURRENT_TIME = 0 ---@type number
 require("commands")
+local Thread = require("utils.thread")
 
 function love.run()
     love.filesystem.createDirectory("output")
     love.filesystem.createDirectory("audio")
-    ASEPRITE_STDIO = io.popen(
-        "\"" .. table.concat(
-            {
-                "env", "ASETUDIO_DIRECTORY="..love.filesystem.getSaveDirectory(),
-                "aseprite",
-                unpack(love.arg.parseGameArguments(arg))
-            }, "\" \"") .. "\"")
-    for full_line in ASEPRITE_STDIO:lines() do
+    ASEPRITE_THREAD = Thread("processthread.lua",{
+        commandline = {
+            "env", "ASETUDIO_DIRECTORY="..love.filesystem.getSaveDirectory(),
+            "aseprite",
+            unpack(love.arg.parseGameArguments(arg))
+        }
+    })
+    while true do
+        if not ASEPRITE_THREAD.managed_thread:isRunning() then
+            return
+        end
+        ---@type {type:"quit"}|string
+        local full_line = ASEPRITE_THREAD:demand()
+        if full_line.type == "quit" then
+            return
+        end
+        ---@cast full_line string
         if full_line:sub(1,#"AsetudioCommand:") == "AsetudioCommand:" then
             local line_unprefixed = full_line:sub(#"AsetudioCommand:"+1, #full_line)
             local command_args = StringUtils.split(line_unprefixed, "\t")
