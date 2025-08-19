@@ -58,12 +58,22 @@ app.events:on('sitechange', function()
     end
 end)
 
+local stopping_events = {
+    GotoNextFrame = true;
+    GotoPreviousFrame = true;
+    GotoNextLayer = true;
+    GotoPreviousLayer = true;
+    CanvasSize = true;
+}
+
 app.events:on('beforecommand', function(ev)
     if ev.name == "PlayAnimation" then
         playing[lastSprite] = not playing[lastSprite]
         updatePlayingState()
-    end
-    if ev.name == "CloseFile" then
+    elseif stopping_events[ev.name] then
+        playing[lastSprite] = false
+        updatePlayingState()
+    elseif ev.name == "CloseFile" then
         playing[lastSprite] = nil
         command('setaudio', '')
         updatePlayingState()
