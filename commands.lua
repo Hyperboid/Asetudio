@@ -38,13 +38,24 @@ COMMANDS = {
     end;
     finishexport = function(name, audio)
         local full_input_prefix = love.filesystem.getSaveDirectory().."/tmp/"..name
-        local full_output_path = love.filesystem.getSaveDirectory().."/output/"..name..".mp4"
+        local full_output_path = love.filesystem.getSaveDirectory().."/output/"..name..".webm"
         local full_audio_path = love.filesystem.getSaveDirectory().."/audio/"..audio
+        local fps = 15 -- TODO: Unhardcode
         local commandline = {
-            "ffmpeg", "-y", "-start_number", "1", "-i", full_input_prefix.."_%d.png", "-i", full_audio_path, "-vcodec", "mpeg4", full_output_path
+            "ffmpeg", "-y",
+            -- "-loglevel", "warning",
+            "-framerate", fps,
+            "-start_number", "1",
+            "-i", full_input_prefix.."_%d.png",
+            "-i", full_audio_path,
+            -- "-vcodec", "mpeg4",
+            "-vf", "scale=iw*4:ih*4:flags=neighbor",
+            "-af", "apad",
+            "-shortest",
+            full_output_path,
         }
         print("$ "..table.concat(commandline, " "))
-        local thread = Thread("processthread.lua", { commandline = commandline})
+        local thread = Thread("processthread.lua", { commandline = commandline, verbose = true})
         thread.end_callback = function ()
             love.window.close()
             print("Finished!")

@@ -14,9 +14,6 @@ function init(plugin)
     end
     --
     if not os.getenv("ASETUDIO_DIRECTORY") then
-        for k, v in pairs(app.params) do
-            print(k,v)
-        end
         return print("Debug: Asetudio not active")
     end
     plugin:newMenuGroup({

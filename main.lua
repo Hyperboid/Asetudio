@@ -7,8 +7,8 @@ local Thread = require("utils.thread")
 ---@type Thread[]
 THREADS = {}
 
-
 function love.load()
+    love.window.close()
     love.filesystem.createDirectory("output")
     love.filesystem.createDirectory("tmp")
     love.filesystem.createDirectory("audio")
@@ -20,7 +20,7 @@ function love.load()
             "env", "ASETUDIO_DIRECTORY="..love.filesystem.getSaveDirectory(),
             "aseprite",
             unpack(love.arg.parseGameArguments(arg))
-        }
+        };
     })
     aseprite_thread.message_callback = function (full_line)
         ---@cast full_line string
